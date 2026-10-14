@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CausalFunnel Demo Store - Standalone Tracker Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #2563eb;
+    }
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #475569;
+      font-weight: 500;
+    }
+    nav a:hover {
+      color: #2563eb;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: white;
+      padding: 48px;
+      border-radius: 12px;
+      margin-bottom: 32px;
+    }
+    .hero h1 {
+      margin-top: 0;
+      font-size: 2rem;
+    }
+    .hero p {
+      color: #94a3b8;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.2s;
+    }
+    .btn:hover {
+      background: #1d4ed8;
+    }
+    .btn-secondary {
+      background: #475569;
+      margin-left: 12px;
+    }
+    .btn-secondary:hover {
+      background: #334155;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+      margin-top: 0;
+    }
+    .price {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #10b981;
+      margin: 12px 0;
+    }
+    .tracker-box {
+      margin-top: 32px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #dbeafe;
+      color: #1d4ed8;
+      margin-bottom: 8px;
+    }
+  </style>
+  <!-- Load the Tracking SDK -->
+  <script src="/tracker.js" data-api-url="/api/events"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">ShopFlow Analytics Demo</div>
+    <nav>
+      <a href="/demo.html" id="nav-home">Home</a>
+      <a href="/demo.html?cat=electronics" id="nav-electronics">Electronics</a>
+      <a href="/demo.html?cat=apparel" id="nav-apparel">Apparel</a>
+      <a href="http://localhost:5173" target="_blank" id="nav-dashboard">Go to Dashboard →</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="hero">
+      <span class="badge">Live Tracking Active</span>
+      <h1>Welcome to ShopFlow Store</h1>
+      <p>
+        Every page view and click on this page is actively tracked by the CausalFunnel Tracking SDK and sent to the backend. Open the Analytics Dashboard to observe your session live!
+      </p>
+      <button class="btn" id="btn-hero-shop-now">Shop All Deals</button>
+      <button class="btn btn-secondary" id="btn-hero-learn-more">Learn More</button>
+    </div>
+
+    <h2>Featured Products</h2>
+    <div class="grid">
+      <div class="card" id="card-prod-1">
+        <h3>Noise-Canceling Wireless Headphones</h3>
+        <p>Premium audio fidelity with active noise cancellation.</p>
+        <div class="price">$249.99</div>
+        <button class="btn" id="btn-add-cart-1">Add to Cart</button>
+      </div>
+
+      <div class="card" id="card-prod-2">
+        <h3>Mechanical Ergonomic Keyboard</h3>
+        <p>Tactile mechanical switches with customizable RGB backlight.</p>
+        <div class="price">$129.99</div>
+        <button class="btn" id="btn-add-cart-2">Add to Cart</button>
+      </div>
+
+      <div class="card" id="card-prod-3">
+        <h3>Ultra HD 4K Monitor 27-inch</h3>
+        <p>Crystal clear IPS display with 144Hz refresh rate.</p>
+        <div class="price">$399.99</div>
+        <button class="btn" id="btn-add-cart-3">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="tracker-box">
+      <h3>Active Session Info</h3>
+      <p id="session-info">Loading session ID...</p>
+      <button class="btn btn-secondary" id="btn-reset-session">Simulate New Session (Reset)</button>
+    </div>
+  </div>
+
+  <script>
+    // Display active session ID on page
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        if (window.CausalFunnel) {
+          const sid = window.CausalFunnel.getSessionId();
+          document.getElementById('session-info').innerHTML =
+            '<strong>Session ID:</strong> <code>' + sid + '</code><br>' +
+            '<strong>Status:</strong> Connected to <code>/api/events</code>';
+        }
+      }, 100);
+    });
+
+    document.getElementById('btn-reset-session').addEventListener('click', () => {
+      if (window.CausalFunnel) {
+        const newSid = window.CausalFunnel.resetSession();
+        document.getElementById('session-info').innerHTML =
+          '<strong>New Session ID:</strong> <code>' + newSid + '</code> (Session restarted)';
+      }
+    });
+  </script>
+</body>
+</html>
